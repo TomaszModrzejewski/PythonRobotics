@@ -57,27 +57,26 @@ class BipedalPlanner(object):
         px_star, py_star = px, py  # modified footstep position
         xi, xi_dot, yi, yi_dot = 0.0, 0.0, 0.01, 0.0
         time = 0.0
-        n = 0
         self.ref_p.append([px, py, 0])
         self.act_p.append([px, py, 0])
-        for i in range(len(self.ref_footsteps)):
+        for n, _ in enumerate(range(len(self.ref_footsteps)), start=1):
             # simulate x, y and those of dot of inverted pendulum
             xi, xi_dot, yi, yi_dot = self.inverted_pendulum(
                 xi, xi_dot, px_star, yi, yi_dot, py_star, z_c, t_sup)
 
             # update time
             time += t_sup
-            n += 1
-
             # calculate px, py, x_, y_, vx_, vy_
             f_x, f_y, f_theta = self.ref_footsteps[n - 1]
             rotate_mat = np.array([[math.cos(f_theta), -math.sin(f_theta)],
                                    [math.sin(f_theta), math.cos(f_theta)]])
 
-            if n == len(self.ref_footsteps):
-                f_x_next, f_y_next, f_theta_next = 0., 0., 0.
-            else:
-                f_x_next, f_y_next, f_theta_next = self.ref_footsteps[n]
+            f_x_next, f_y_next, f_theta_next = (
+                (0.0, 0.0, 0.0)
+                if n == len(self.ref_footsteps)
+                else self.ref_footsteps[n]
+            )
+
             rotate_mat_next = np.array(
                 [[math.cos(f_theta_next), -math.sin(f_theta_next)],
                  [math.sin(f_theta_next), math.cos(f_theta_next)]])
@@ -103,9 +102,9 @@ class BipedalPlanner(object):
             # calculate modified footsteps
             D = a * math.pow(C - 1, 2) + b * math.pow(S / Tc, 2)
             px_star = -a * (C - 1) / D * (xd - C * xi - Tc * S * xi_dot) \
-                      - b * S / (Tc * D) * (xd_dot - S / Tc * xi - C * xi_dot)
+                          - b * S / (Tc * D) * (xd_dot - S / Tc * xi - C * xi_dot)
             py_star = -a * (C - 1) / D * (yd - C * yi - Tc * S * yi_dot) \
-                      - b * S / (Tc * D) * (yd_dot - S / Tc * yi - C * yi_dot)
+                          - b * S / (Tc * D) * (yd_dot - S / Tc * yi - C * yi_dot)
             self.act_p.append([px_star, py_star, f_theta])
 
             # plot
@@ -153,7 +152,7 @@ class BipedalPlanner(object):
                 foot_height = 0.04
                 for j in range(len(self.ref_p)):
                     angle = self.ref_p[j][2] + \
-                            math.atan2(foot_height,
+                                math.atan2(foot_height,
                                        foot_width) - math.pi
                     r = math.sqrt(
                         math.pow(foot_width / 3., 2) + math.pow(
@@ -173,7 +172,7 @@ class BipedalPlanner(object):
                 # foot rectangle for self.act_p
                 for j in range(len(self.act_p)):
                     angle = self.act_p[j][2] + \
-                            math.atan2(foot_height,
+                                math.atan2(foot_height,
                                        foot_width) - math.pi
                     r = math.sqrt(
                         math.pow(foot_width / 3., 2) + math.pow(

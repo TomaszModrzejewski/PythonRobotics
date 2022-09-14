@@ -87,7 +87,7 @@ def key_points(o_dict):
                 obs_count += 1
             if o_dict[(x + i3, y + j3)]:
                 obs_count += 1
-            if obs_count == 3 or obs_count == 1:
+            if obs_count in {3, 1}:
                 c_list.append((x, y))
                 if show_animation:
                     plt.plot(x, y, ".y")
@@ -131,7 +131,7 @@ class SearchAlgo:
                                           'fcost': np.inf,
                                           'open': True, 'in_open_list': False}
             self.all_nodes[tuple(self.goal_pt)] = \
-                {'pos': self.goal_pt, 'pred': None,
+                    {'pos': self.goal_pt, 'pred': None,
                  'gcost': np.inf, 'hcost': 0, 'fcost': np.inf,
                  'open': True, 'in_open_list': True}
         else:
@@ -144,7 +144,7 @@ class SearchAlgo:
                                               'open': True,
                                               'in_open_list': False}
         self.all_nodes[tuple(self.start_pt)] = \
-            {'pos': self.start_pt, 'pred': None,
+                {'pos': self.start_pt, 'pred': None,
              'gcost': g_cost, 'hcost': h_cost, 'fcost': f_cost,
              'open': True, 'in_open_list': True}
         self.open_set.append(self.all_nodes[tuple(self.start_pt)])
@@ -154,10 +154,7 @@ class SearchAlgo:
         x, y = x1, y1
         val = 0
         while x != x2 or y != y2:
-            if x != x2 and y != y2:
-                val += 14
-            else:
-                val += 10
+            val += 14 if x != x2 and y != y2 else 10
             x, y = x + np.sign(x2 - x), y + np.sign(y2 - y)
         return val
 
@@ -166,7 +163,7 @@ class SearchAlgo:
         counter = 1
         got_goal = False
         while not self.obs_grid[(x + i_temp, y + j_temp)] and \
-                counter < max_theta:
+                    counter < max_theta:
             i_temp += i
             j_temp += j
             counter += 1
@@ -190,12 +187,12 @@ class SearchAlgo:
             p = 0
             for p_n in self.open_set[1:]:
                 if p_n['fcost'] == lowest_f and \
-                        p_n['gcost'] < lowest_g:
+                            p_n['gcost'] < lowest_g:
                     lowest_g = p_n['gcost']
                     p += 1
                 elif p_n['fcost'] == lowest_f and \
-                        p_n['gcost'] == lowest_g and \
-                        p_n['hcost'] < lowest_h:
+                            p_n['gcost'] == lowest_g and \
+                            p_n['hcost'] < lowest_h:
                     lowest_h = p_n['hcost']
                     p += 1
                 else:
@@ -218,7 +215,7 @@ class SearchAlgo:
                 if list(cand_pt) == self.goal_pt:
                     current_node['open'] = False
                     self.all_nodes[tuple(cand_pt)]['pred'] = \
-                        current_node['pos']
+                            current_node['pos']
                     goal_found = True
                     break
 
@@ -242,9 +239,7 @@ class SearchAlgo:
                 plt.pause(0.001)
             if goal_found:
                 current_node = self.all_nodes[tuple(self.goal_pt)]
-            while goal_found:
-                if current_node['pred'] is None:
-                    break
+            while goal_found and current_node['pred'] is not None:
                 x = [current_node['pos'][0], current_node['pred'][0]]
                 y = [current_node['pos'][1], current_node['pred'][1]]
                 current_node = self.all_nodes[tuple(current_node['pred'])]
