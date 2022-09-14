@@ -104,14 +104,14 @@ class Eta3PathSegment(object):
         self.coeffs[1, 1] = eta[0] * sa
         # quadratic (u^2)
         self.coeffs[0, 2] = 1. / 2 * eta[2] * \
-            ca - 1. / 2 * eta[0]**2 * kappa[0] * sa
+                ca - 1. / 2 * eta[0]**2 * kappa[0] * sa
         self.coeffs[1, 2] = 1. / 2 * eta[2] * \
-            sa + 1. / 2 * eta[0]**2 * kappa[0] * ca
+                sa + 1. / 2 * eta[0]**2 * kappa[0] * ca
         # cubic (u^3)
         self.coeffs[0, 3] = 1. / 6 * eta[4] * ca - 1. / 6 * \
-            (eta[0]**3 * kappa[1] + 3. * eta[0] * eta[2] * kappa[0]) * sa
+                (eta[0]**3 * kappa[1] + 3. * eta[0] * eta[2] * kappa[0]) * sa
         self.coeffs[1, 3] = 1. / 6 * eta[4] * sa + 1. / 6 * \
-            (eta[0]**3 * kappa[1] + 3. * eta[0] * eta[2] * kappa[0]) * ca
+                (eta[0]**3 * kappa[1] + 3. * eta[0] * eta[2] * kappa[0]) * ca
         # quartic (u^4)
         tmp1 = 35. * (end_pose[0] - start_pose[0])
         tmp2 = (20. * eta[0] + 5 * eta[2] + 2. / 3 * eta[4]) * ca
@@ -221,15 +221,17 @@ class Eta3PathSegment(object):
 def test1():
 
     for i in range(10):
-        path_segments = []
         # segment 1: lane-change curve
         start_pose = [0, 0, 0]
         end_pose = [4, 3.0, 0]
         # NOTE: The ordering on kappa is [kappa_A, kappad_A, kappa_B, kappad_B], with kappad_* being the curvature derivative
         kappa = [0, 0, 0, 0]
         eta = [i, i, 0, 0, 0, 0]
-        path_segments.append(Eta3PathSegment(
-            start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa))
+        path_segments = [
+            Eta3PathSegment(
+                start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa
+            )
+        ]
 
         path = Eta3Path(path_segments)
 
@@ -255,15 +257,17 @@ def test1():
 def test2():
 
     for i in range(10):
-        path_segments = []
         # segment 1: lane-change curve
         start_pose = [0, 0, 0]
         end_pose = [4, 3.0, 0]
         # NOTE: The ordering on kappa is [kappa_A, kappad_A, kappa_B, kappad_B], with kappad_* being the curvature derivative
         kappa = [0, 0, 0, 0]
         eta = [0, 0, (i - 5) * 20, (5 - i) * 20, 0, 0]
-        path_segments.append(Eta3PathSegment(
-            start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa))
+        path_segments = [
+            Eta3PathSegment(
+                start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa
+            )
+        ]
 
         path = Eta3Path(path_segments)
 
@@ -283,16 +287,17 @@ def test2():
 
 
 def test3():
-    path_segments = []
-
     # segment 1: lane-change curve
     start_pose = [0, 0, 0]
     end_pose = [4, 1.5, 0]
     # NOTE: The ordering on kappa is [kappa_A, kappad_A, kappa_B, kappad_B], with kappad_* being the curvature derivative
     kappa = [0, 0, 0, 0]
     eta = [4.27, 4.27, 0, 0, 0, 0]
-    path_segments.append(Eta3PathSegment(
-        start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa))
+    path_segments = [
+        Eta3PathSegment(
+            start_pose=start_pose, end_pose=end_pose, eta=eta, kappa=kappa
+        )
+    ]
 
     # segment 2: line segment
     start_pose = [4, 1.5, 0]
